@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dolomite Farm</title>
+    <!-- Use Tailwind CSS for a modern, responsive design -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Use Lucide Icons for clean, modern icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts for a clean font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        /* Custom styles for animations and font */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fcf5; /* Light green background */
+        }
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .fade-in.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .nav-link.active {
+            font-weight: bold;
+            color: #1a472a; /* Dark green */
+            border-bottom: 2px solid #38a169; /* Light green */
+        }
+        .loader {
+            border: 4px solid #f3f3f3; /* Light grey */
+            border-top: 4px solid #34d399; /* Green */
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <!-- Navigation Bar -->
+    <header class="fixed top-0 left-0 right-0 bg-white shadow-sm z-50">
+        <nav class="container mx-auto px-6 py-4 flex items-center justify-between">
+            <!-- Logo or Farm Name -->
+            <a href="#" class="text-2xl font-extrabold text-green-800">Dolomite Farm</a>
+            <!-- Navigation links -->
+            <div class="flex items-center space-x-6">
+                <a href="#home" class="nav-link text-lg font-semibold text-gray-600 hover:text-green-800 transition duration-300" onclick="showPage('home')">Home</a>
+                <a href="#about" class="nav-link text-lg font-semibold text-gray-600 hover:text-green-800 transition duration-300" onclick="showPage('about')">About Us</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="pt-20">
+        <!-- Home Page Section -->
+        <section id="home-page" class="page container mx-auto px-6 py-12 lg:py-24 space-y-12">
+            <!-- Hero Section with Background Video -->
+            <div class="relative rounded-3xl overflow-hidden shadow-xl min-h-[50vh] flex items-center justify-center">
+                <!-- Video element for background -->
+                <video autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover z-0">
+                    <!-- Replace the src with the URL of your video file -->
+                    <source src="assets/farmUpd2.mp4" type="video/mp4">
+                    <!-- Fallback content for browsers that don't support the video tag -->
+                    Your browser does not support the video tag.
+                </video>
+                
+                <!-- Overlay to make text readable -->
+                <div class="absolute inset-0 bg-black bg-opacity-40 z-10"></div>
+                
+                <!-- Content on top of the video -->
+                <div class="relative z-20 p-8 lg:p-20 text-white flex flex-col items-center justify-center text-center space-y-6">
+                    <h1 class="text-4xl lg:text-6xl font-extrabold fade-in">Welcome to Dolomite Farm!</h1>
+                    <p class="text-xl lg:text-2xl max-w-3xl font-light leading-relaxed fade-in">
+                        A small, family-run homestead dedicated to sustainable growing and community resilience in Dolomite, Alabama.
+                    </p>
+                    <a href="#about" onclick="showPage('about')" class="mt-8 px-8 py-4 bg-green-600 hover:bg-green-700 text-white text-lg font-semibold rounded-full shadow-lg transition transform hover:scale-105 duration-300 fade-in">
+                        Learn Our Story
+                    </a>
+                </div>
+            </div>
+            
+            <!-- What We Offer Section -->
+            <div class="grid md:grid-cols-2 gap-8 lg:gap-12 text-center">
+                <div class="bg-white p-8 lg:p-12 rounded-3xl shadow-lg fade-in">
+                    <div class="flex items-center justify-center mb-4">
+                        <i data-lucide="leafy-green" class="h-12 w-12 text-orange-500"></i>
+                    </div>
+                    <h3 class="text-3xl font-bold mb-4 text-green-800">Fresh Seasonal Produce</h3>
+                    <p class="text-lg text-gray-700">
+                        From our garden to your table, enjoy a variety of vegetables and herbs grown with love and intention. Our produce is always fresh and in season.
+                    </p>
+                </div>
+                <div class="bg-white p-8 lg:p-12 rounded-3xl shadow-lg fade-in">
+                    <div class="flex items-center justify-center mb-4">
+                        <i data-lucide="egg" class="h-12 w-12 text-yellow-500"></i>
+                    </div>
+                    <h3 class="text-3xl font-bold mb-4 text-green-800">Farm-Fresh Eggs</h3>
+                    <p class="text-lg text-gray-700">
+                        Our happy chickens and ducks are kept safe in spacious runs, where they are protected from predators. We still get delicious and nutritious eggs from them, and you'll taste the difference!
+                    </p>
+                </div>
+            </div>
+
+            <!-- Recipe Generator Section -->
+            <div class="bg-white p-8 lg:p-12 rounded-3xl shadow-lg fade-in">
+                <h3 class="text-3xl font-bold mb-4 text-green-800 text-center">Farm-to-Table Recipe Generator</h3>
+                <p class="text-lg text-gray-700 max-w-2xl mx-auto mb-6 text-center">
+                    Enter ingredients from your farm below and we'll generate a recipe for you!
+                </p>
+                <div class="flex flex-col md:flex-row items-center gap-4 mb-6">
+                    <textarea id="recipe-ingredients" class="w-full md:w-3/4 p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" rows="3" placeholder="e.g. fresh carrots, kale, duck eggs"></textarea>
+                    <button onclick="generateRecipe()" class="w-full md:w-1/4 px-6 py-3 bg-green-700 hover:bg-green-800 text-white font-semibold rounded-full shadow-lg transition transform hover:scale-105 duration-300 flex items-center justify-center">
+                        <span class="mr-2">✨</span> Generate Recipe
+                    </button>
+                </div>
+                <div id="recipe-output-container" class="mt-8 p-6 bg-gray-50 rounded-lg border border-gray-200 hidden">
+                    <h4 class="text-2xl font-bold mb-2 text-green-800">Your Recipe:</h4>
+                    <div id="recipe-output" class="prose text-gray-700"></div>
+                </div>
+                <div id="recipe-loading" class="hidden flex justify-center items-center">
+                    <div class="loader"></div>
+                </div>
+            </div>
+
+            <!-- Contact Section -->
+            <div class="bg-green-100 p-8 lg:p-12 rounded-3xl shadow-lg text-center fade-in">
+                <h3 class="text-3xl font-bold mb-4 text-green-800">Get in Touch</h3>
+                <p class="text-lg text-gray-700 max-w-2xl mx-auto mb-6">
+                        Ready to taste the difference from a local farm? Reach out to us to learn more about our current offerings or to place an order.
+                </p>
+                <a href="mailto:justin@dolomite.farm" class="inline-flex items-center px-8 py-4 bg-green-700 hover:bg-green-800 text-white text-lg font-semibold rounded-full shadow-lg transition transform hover:scale-105 duration-300">
+                    <i data-lucide="mail" class="mr-3 h-5 w-5"></i>
+                    justin@dolomite.farm
+                </a>
+            </div>
+        </section>
+
+        <!-- About Us Page Section -->
+        <section id="about-page" class="page container mx-auto px-6 py-12 lg:py-24 space-y-12 hidden">
+            <!-- Our Story Section -->
+            <div class="bg-white p-8 lg:p-12 rounded-3xl shadow-xl flex flex-col md:flex-row items-center gap-8 fade-in">
+                <img src="https://placehold.co/500x400/d6e9c2/161a15?text=Our+Story" alt="Our Story" class="rounded-2xl md:w-1/2 w-full object-cover shadow-md">
+                <div class="md:w-1/2">
+                    <h2 class="text-4xl font-extrabold mb-4 text-green-800">Our Story</h2>
+                    <p id="about-us-text" class="text-lg text-gray-700 leading-relaxed">
+                        Dolomite Farm is more than just a farm. It's a reflection of our family's deep commitment to the land and our community. As a family-run farmstead in Dolomite, Alabama, we've dedicated ourselves to the principles of sustainable growing and community resilience. We believe that farming is an act of care. That's why we use sustainable growing practices that prioritize the health of our soil, the well-being of our animals, and the integrity of our food. Our chickens and ducks are kept safe in spacious runs, which results in the best-tasting eggs. Our work is rooted in a commitment to equity. We strive to make fresh, healthy food accessible to our local community, ensuring that our harvests contribute to a stronger, more connected neighborhood. We are proud to feed our community with care and intention, one vegetable and one egg at a time.
+                    </p>
+                    <button onclick="speakAboutUs()" class="mt-4 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-full shadow-lg transition transform hover:scale-105 duration-300">
+                        <span class="mr-2">✨</span> Listen to Our Story
+                    </button>
+                    <audio id="tts-audio" class="mt-4 w-full" controls></audio>
+                </div>
+            </div>
+
+                        <!-- Meet the Team Section -->
+            <div class="fade-in text-center">
+                <h2 class="text-4xl font-extrabold mb-8 text-green-800">Meet Our Team</h2>
+
+                <!-- Row 1: 3 Team Members -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                    <div class="flex flex-col items-center">
+                        <img src="https://placehold.co/300x300/a3e635/161a15?text=Team+Member+1" alt="Justin" class="rounded-full w-48 h-48 object-cover shadow-md mb-4">
+                        <h4 class="text-xl font-bold text-green-800">Justin</h4>
+                        <p class="text-lg text-gray-700">Chief Farming Officer</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <img src="https://placehold.co/300x300/a3e635/161a15?text=Team+Member+2" alt="Emmi" class="rounded-full w-48 h-48 object-cover shadow-md mb-4">
+                        <h4 class="text-xl font-bold text-green-800">Emmi</h4>
+                        <p class="text-lg text-gray-700">Chief Creative Marketing Officer</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <img src="https://placehold.co/300x300/a3e635/161a15?text=Team+Member+3" alt="Evvi" class="rounded-full w-48 h-48 object-cover shadow-md mb-4">
+                        <h4 class="text-xl font-bold text-green-800">Evvi</h4>
+                        <p class="text-lg text-gray-700">Chief of Animals and Care</p>
+                    </div>
+                </div>
+
+                <!-- Row 2 & 3: 4 Team Members -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                    <div class="flex flex-col items-center">
+                        <img src="https://placehold.co/300x300/a3e635/161a15?text=Team+Member+4" alt="Felicia" class="rounded-full w-36 h-36 object-cover shadow-md mb-4">
+                        <h4 class="text-lg font-bold text-green-800">Felicia</h4>
+                        <p class="text-base text-gray-700">Director of Ponds and Fruits</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <img src="https://placehold.co/300x300/a3e635/161a15?text=Team+Member+5" alt="Patrick" class="rounded-full w-36 h-36 object-cover shadow-md mb-4">
+                        <h4 class="text-lg font-bold text-green-800">Patrick</h4>
+                        <p class="text-base text-gray-700">Director of Quacks and Vegatables</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <img src="https://placehold.co/300x300/a3e635/161a15?text=Team+Member+6" alt="Bean" class="rounded-full w-36 h-36 object-cover shadow-md mb-4">
+                        <h4 class="text-lg font-bold text-green-800">Bean</h4>
+                        <p class="text-base text-gray-700">Vice President of Baked Goods</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <img src="https://placehold.co/300x300/a3e635/161a15?text=Team+Member+7" alt="Team Member 7" class="rounded-full w-36 h-36 object-cover shadow-md mb-4">
+                        <h4 class="text-lg font-bold text-green-800">Team Member 7</h4>
+                        <p class="text-base text-gray-700">Title 7</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <img src="https://placehold.co/300x300/a3e635/161a15?text=Team+Member+8" alt="Team Member 8" class="rounded-full w-36 h-36 object-cover shadow-md mb-4">
+                        <h4 class="text-lg font-bold text-green-800">Team Member 8</h4>
+                        <p class="text-base text-gray-700">Title 8</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <img src="https://placehold.co/300x300/a3e635/161a15?text=Team+Member+9" alt="Team Member 9" class="rounded-full w-36 h-36 object-cover shadow-md mb-4">
+                        <h4 class="text-lg font-bold text-green-800">Team Member 9</h4>
+                        <p class="text-base text-gray-700">Title 9</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <img src="https://placehold.co/300x300/a3e635/161a15?text=Team+Member+10" alt="Team Member 10" class="rounded-full w-36 h-36 object-cover shadow-md mb-4">
+                        <h4 class="text-lg font-bold text-green-800">Team Member 10</h4>
+                        <p class="text-base text-gray-700">Title 10</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <img src="https://placehold.co/300x300/a3e635/161a15?text=Team+Member+11" alt="Team Member 11" class="rounded-full w-36 h-36 object-cover shadow-md mb-4">
+                        <h4 class="text-lg font-bold text-green-800">Team Member 11</h4>
+                        <p class="text-base text-gray-700">Title 11</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-green-900 text-white py-6 mt-12 text-center">
+        <div class="container mx-auto px-6">
+            <p>&copy; 2024 Dolomite Farm. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript for page switching, animations, and Gemini API features -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        // Function to handle showing and hiding pages
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.add('hidden');
+            });
+            // Show the requested page
+            document.getElementById(pageId + '-page').classList.remove('hidden');
+
+            // Update active state in navigation
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            document.querySelector(`a[href="#${pageId}"]`).classList.add('active');
+
+            // Re-run animations for the new page
+            animateOnScroll();
+        }
+
+        // Intersection Observer for fade-in animations
+        const fadeInElements = document.querySelectorAll('.fade-in');
+        
+        const animateOnScroll = () => {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                    } else {
+                        // Optional: remove class to re-trigger on scroll back up
+                        entry.target.classList.remove('is-visible');
+                    }
+                });
+            }, {
+                threshold: 0.1 // Trigger when 10% of the element is visible
+            });
+
+            fadeInElements.forEach(element => {
+                observer.observe(element);
+            });
+        };
+
+        // Gemini API powered recipe generator
+        async function generateRecipe() {
+            const ingredients = document.getElementById('recipe-ingredients').value;
+            const outputContainer = document.getElementById('recipe-output-container');
+            const outputDiv = document.getElementById('recipe-output');
+            const loadingIndicator = document.getElementById('recipe-loading');
+
+            if (!ingredients) {
+                alert('Please enter at least one ingredient!');
+                return;
+            }
+
+            // Show loading indicator and clear previous output
+            outputContainer.classList.add('hidden');
+            outputDiv.innerHTML = '';
+            loadingIndicator.classList.remove('hidden');
+
+            const prompt = `Create a simple recipe using these ingredients: ${ingredients}. The recipe should be easy to follow for a home cook and include a title, a list of ingredients, and step-by-step instructions. Please format the response using Markdown.`;
+
+            let chatHistory = [];
+            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+            const payload = { contents: chatHistory };
+            const apiKey = "" 
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+                
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    outputDiv.innerHTML = marked.parse(text); // Use a markdown parser to render the content
+                    outputContainer.classList.remove('hidden');
+                } else {
+                    outputDiv.innerHTML = '<p>Sorry, I couldn\'t generate a recipe. Please try again with different ingredients.</p>';
+                    outputContainer.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Error fetching recipe:', error);
+                outputDiv.innerHTML = '<p>An error occurred. Please try again later.</p>';
+                outputContainer.classList.remove('hidden');
+            } finally {
+                loadingIndicator.classList.add('hidden');
+            }
+        }
+
+        // Helper function to decode base64 to array buffer
+        function base64ToArrayBuffer(base64) {
+            const binaryString = window.atob(base64);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            return bytes.buffer;
+        }
+
+        // Helper function to convert PCM audio data to WAV
+        function pcmToWav(pcm16, sampleRate) {
+            const pcmData = pcm16.buffer;
+            const buffer = new ArrayBuffer(44 + pcmData.byteLength);
+            const view = new DataView(buffer);
+            let offset = 0;
+
+            // RIFF chunk
+            view.setUint32(offset, 0x52494646, true); // "RIFF"
+            offset += 4;
+            view.setUint32(offset, 36 + pcmData.byteLength, true);
+            offset += 4;
+            view.setUint32(offset, 0x57415645, true); // "WAVE"
+            offset += 4;
+
+            // fmt chunk
+            view.setUint32(offset, 0x666d7420, true); // "fmt "
+            offset += 4;
+            view.setUint32(offset, 16, true); // Subchunk1Size
+            offset += 4;
+            view.setUint16(offset, 1, true); // AudioFormat
+            offset += 2;
+            view.setUint16(offset, 1, true); // NumChannels
+            offset += 2;
+            view.setUint32(offset, sampleRate, true); // SampleRate
+            offset += 4;
+            view.setUint32(offset, sampleRate * 2, true); // ByteRate
+            offset += 4;
+            view.setUint16(offset, 2, true); // BlockAlign
+            offset += 2;
+            view.setUint16(offset, 16, true); // BitsPerSample
+            offset += 2;
+
+            // data chunk
+            view.setUint32(offset, 0x64617461, true); // "data"
+            offset += 4;
+            view.setUint32(offset, pcmData.byteLength, true);
+            offset += 4;
+
+            const pcmBytes = new Uint8Array(pcmData);
+            for (let i = 0; i < pcmBytes.length; i++) {
+                view.setUint8(offset + i, pcmBytes[i]);
+            }
+            return new Blob([view], { type: 'audio/wav' });
+        }
+
+
+        // Gemini API powered text-to-speech for "About Us" page
+        async function speakAboutUs() {
+            const aboutUsText = document.getElementById('about-us-text').innerText;
+            const audioPlayer = document.getElementById('tts-audio');
+
+            audioPlayer.src = ''; // Clear previous audio
+            const payload = {
+                contents: [{
+                    parts: [{ text: aboutUsText }]
+                }],
+                generationConfig: {
+                    responseModalities: ["AUDIO"],
+                    speechConfig: {
+                        voiceConfig: {
+                            prebuiltVoiceConfig: { voiceName: "Kore" }
+                        }
+                    }
+                },
+                model: "gemini-2.5-flash-preview-tts"
+            };
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
+            
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const result = await response.json();
+                const part = result?.candidates?.[0]?.content?.parts?.[0];
+                const audioData = part?.inlineData?.data;
+                const mimeType = part?.inlineData?.mimeType;
+
+                if (audioData && mimeType && mimeType.startsWith("audio/")) {
+                    // Extract sample rate from mimeType
+                    const match = mimeType.match(/rate=(\d+)/);
+                    const sampleRate = match ? parseInt(match[1], 10) : 16000;
+                    
+                    const pcmData = base64ToArrayBuffer(audioData);
+                    const pcm16 = new Int16Array(pcmData);
+                    const wavBlob = pcmToWav(pcm16, sampleRate);
+                    const audioUrl = URL.createObjectURL(wavBlob);
+                    
+                    audioPlayer.src = audioUrl;
+                    audioPlayer.play();
+                } else {
+                    console.error("Failed to generate audio. Response structure unexpected or content missing.");
+                    alert("Failed to generate audio. Please try again.");
+                }
+
+            } catch (error) {
+                console.error('Error generating TTS audio:', error);
+                alert("An error occurred while generating audio. Please try again later.");
+            }
+        }
+
+
+        // Initial setup on page load
+        window.onload = function() {
+            // Activate Lucide icons - this is the fix
+            lucide.createIcons();
+            // Show the home page initially
+            showPage('home');
+            // Trigger animations
+            animateOnScroll();
+        };
+    </script>
+</body>
+</html>
