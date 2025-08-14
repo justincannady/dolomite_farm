@@ -1,4 +1,4 @@
-get there that's a while<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -32,17 +32,16 @@ get there that's a while<!DOCTYPE html>
             color: #1a472a; /* Dark green */
             border-bottom: 2px solid #38a169; /* Light green */
         }
-        .loader {
-            border: 4px solid #f3f3f3; /* Light grey */
-            border-top: 4px solid #34d399; /* Green */
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
+        .modal {
+            background-color: rgba(0, 0, 0, 0.75);
+            transition: opacity 0.3s ease-in-out;
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .modal-content {
+            transform: translateY(20px);
+            transition: transform 0.3s ease-in-out;
+        }
+        .modal-open .modal-content {
+            transform: translateY(0);
         }
     </style>
 </head>
@@ -57,6 +56,7 @@ get there that's a while<!DOCTYPE html>
             <div class="flex items-center space-x-6">
                 <a href="#home" class="nav-link text-lg font-semibold text-gray-600 hover:text-green-800 transition duration-300" onclick="showPage('home')">Home</a>
                 <a href="#about" class="nav-link text-lg font-semibold text-gray-600 hover:text-green-800 transition duration-300" onclick="showPage('about')">About Us</a>
+                <a href="#recipes" class="nav-link text-lg font-semibold text-gray-600 hover:text-green-800 transition duration-300" onclick="showPage('recipes')">Recipes</a>
             </div>
         </nav>
     </header>
@@ -109,27 +109,6 @@ get there that's a while<!DOCTYPE html>
                     <p class="text-lg text-gray-700">
                         Our happy chickens and ducks are kept safe in spacious runs, where they are protected from predators. We still get delicious and nutritious eggs from them, and you'll taste the difference!
                     </p>
-                </div>
-            </div>
-
-            <!-- Recipe Generator Section -->
-            <div class="bg-white p-8 lg:p-12 rounded-3xl shadow-lg fade-in">
-                <h3 class="text-3xl font-bold mb-4 text-green-800 text-center">Farm-to-Table Recipe Generator</h3>
-                <p class="text-lg text-gray-700 max-w-2xl mx-auto mb-6 text-center">
-                    Enter ingredients from your farm below and we'll generate a recipe for you!
-                </p>
-                <div class="flex flex-col md:flex-row items-center gap-4 mb-6">
-                    <textarea id="recipe-ingredients" class="w-full md:w-3/4 p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" rows="3" placeholder="e.g. fresh carrots, kale, duck eggs"></textarea>
-                    <button onclick="generateRecipe()" class="w-full md:w-1/4 px-6 py-3 bg-green-700 hover:bg-green-800 text-white font-semibold rounded-full shadow-lg transition transform hover:scale-105 duration-300 flex items-center justify-center">
-                        <span class="mr-2">✨</span> Generate Recipe
-                    </button>
-                </div>
-                <div id="recipe-output-container" class="mt-8 p-6 bg-gray-50 rounded-lg border border-gray-200 hidden">
-                    <h4 class="text-2xl font-bold mb-2 text-green-800">Your Recipe:</h4>
-                    <div id="recipe-output" class="prose text-gray-700"></div>
-                </div>
-                <div id="recipe-loading" class="hidden flex justify-center items-center">
-                    <div class="loader"></div>
                 </div>
             </div>
 
@@ -210,7 +189,7 @@ get there that's a while<!DOCTYPE html>
                     </div>
                     <div class="flex flex-col items-center">
                         <img src="assets/Hootie.jpg" alt="Hootie" class="rounded-full w-36 h-36 object-cover shadow-md mb-4">
-                        <h4 class="text-lg font-bold text-green-800">Team Member 8</h4>
+                        <h4 class="text-lg font-bold text-green-800">Hootie</h4>
                         <p class="text-base text-gray-700">Senior Security Director</p>
                     </div>
                     <div class="flex flex-col items-center">
@@ -231,7 +210,47 @@ get there that's a while<!DOCTYPE html>
                 </div>
             </div>
         </section>
+        
+        <!-- Recipes Page Section -->
+        <section id="recipes-page" class="page container mx-auto px-6 py-12 lg:py-24 space-y-8 hidden">
+            <h2 class="text-4xl font-extrabold mb-4 text-green-800 text-center fade-in">Farmhouse Recipes</h2>
+            <p class="text-lg text-gray-700 text-center max-w-3xl mx-auto mb-8 fade-in">
+                Find delicious recipes using fresh ingredients from Dolomite Farm.
+            </p>
+
+            <!-- Search Bar -->
+            <div class="flex justify-center mb-8 fade-in">
+                <input type="text" id="recipe-search" placeholder="Search for recipes..." class="w-full max-w-lg p-4 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+            </div>
+
+            <!-- Recipe Cards Container -->
+            <div id="recipe-cards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Recipe cards will be injected here by JavaScript -->
+            </div>
+        </section>
     </main>
+
+    <!-- Lightbox Modal for Recipes -->
+    <div id="recipe-modal" class="modal fixed inset-0 z-[100] flex items-center justify-center p-4 hidden">
+        <div class="modal-content relative bg-white p-8 rounded-3xl shadow-2xl max-w-3xl w-full mx-auto max-h-[90vh] overflow-y-auto">
+            <button onclick="hideLightbox()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition duration-300">
+                <i data-lucide="x" class="h-8 w-8"></i>
+            </button>
+            <h3 id="modal-recipe-title" class="text-3xl font-bold mb-4 text-green-800"></h3>
+            <p id="modal-recipe-description" class="mb-6 text-gray-700"></p>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <h4 class="text-xl font-bold mb-2 text-green-800">Ingredients</h4>
+                    <ul id="modal-ingredients-list" class="list-disc list-inside text-lg text-gray-700 space-y-1"></ul>
+                </div>
+                <div>
+                    <h4 class="text-xl font-bold mb-2 text-green-800">Instructions</h4>
+                    <ol id="modal-instructions-list" class="list-decimal list-inside text-lg text-gray-700 space-y-2"></ol>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer class="bg-green-900 text-white py-6 mt-12 text-center">
@@ -240,25 +259,269 @@ get there that's a while<!DOCTYPE html>
         </div>
     </footer>
 
-    <!-- JavaScript for page switching, animations, and Gemini API features -->
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- JavaScript for page switching, animations, and new recipe features -->
     <script>
+        const recipes = [
+            {
+                title: "Fresh Duck Egg and Kale Frittata",
+                description: "A simple and delicious way to use our nutritious duck eggs and fresh garden kale.",
+                ingredients: [
+                    "6 Dolomite Farm duck eggs",
+                    "1 cup chopped fresh kale",
+                    "1/4 cup diced onion",
+                    "1 tbsp olive oil",
+                    "1/2 cup crumbled feta cheese (optional)",
+                    "Salt and pepper to taste"
+                ],
+                instructions: [
+                    "Preheat oven to 375°F (190°C).",
+                    "In an oven-safe skillet, heat olive oil over medium heat. Sauté the onion until soft, then add the kale and cook until wilted.",
+                    "In a bowl, whisk the duck eggs with salt and pepper.",
+                    "Pour the egg mixture over the kale and onion in the skillet. Sprinkle with feta cheese.",
+                    "Bake for 15-20 minutes, or until the frittata is set and lightly golden.",
+                    "Let it cool slightly before serving."
+                ]
+            },
+            {
+                title: "Roasted Carrot and Herb Salad",
+                description: "A vibrant and healthy salad that highlights the natural sweetness of our fresh carrots.",
+                ingredients: [
+                    "4-5 Dolomite Farm carrots, chopped",
+                    "2 tbsp olive oil",
+                    "1 tsp honey",
+                    "1/2 tsp cumin",
+                    "1/4 cup fresh cilantro or parsley, chopped",
+                    "Juice of 1 lemon",
+                    "Salt and pepper to taste"
+                ],
+                instructions: [
+                    "Preheat oven to 400°F (200°C).",
+                    "Toss carrots with olive oil, honey, cumin, salt, and pepper on a baking sheet.",
+                    "Roast for 20-25 minutes, or until tender and caramelized.",
+                    "Let the carrots cool slightly, then transfer to a serving bowl.",
+                    "Add the fresh herbs and lemon juice, tossing to combine. Serve warm or at room temperature."
+                ]
+            },
+            {
+                title: "Sautéed Oyster Mushrooms with Garlic and Thyme",
+                description: "A simple and elegant side dish that brings out the earthy flavor of oyster mushrooms.",
+                ingredients: [
+                    "1 lb Dolomite Farm oyster mushrooms, torn into strips",
+                    "2 cloves garlic, minced",
+                    "2 tbsp butter or olive oil",
+                    "1 tbsp fresh thyme leaves",
+                    "Salt and pepper to taste"
+                ],
+                instructions: [
+                    "Heat butter or oil in a skillet over medium-high heat.",
+                    "Add oyster mushrooms and sauté until they release their liquid and begin to brown, about 5-7 minutes.",
+                    "Add minced garlic and fresh thyme, cooking for another minute until fragrant.",
+                    "Season with salt and pepper and serve immediately."
+                ]
+            },
+            {
+                title: "Creamy Oyster Mushroom Pasta",
+                description: "A rich and savory pasta dish featuring tender oyster mushrooms in a light cream sauce.",
+                ingredients: [
+                    "12 oz pasta of your choice",
+                    "1/2 lb Dolomite Farm oyster mushrooms, sliced",
+                    "1 shallot, finely chopped",
+                    "1 clove garlic, minced",
+                    "1/2 cup heavy cream",
+                    "1/4 cup grated Parmesan cheese",
+                    "1 tbsp olive oil",
+                    "Fresh parsley for garnish",
+                    "Salt and pepper to taste"
+                ],
+                instructions: [
+                    "Cook pasta according to package directions. Reserve 1/4 cup of pasta water before draining.",
+                    "While pasta cooks, heat olive oil in a large pan over medium heat. Add shallot and cook until softened.",
+                    "Add mushrooms and cook until browned and tender.",
+                    "Stir in garlic and cook for 30 seconds. Pour in heavy cream and reserved pasta water, and bring to a simmer.",
+                    "Add cooked pasta and Parmesan cheese, tossing to coat. Garnish with fresh parsley."
+                ]
+            },
+            {
+                title: "Lion's Mane 'Crab' Cakes",
+                description: "A vegetarian take on a classic, with the unique texture of lion's mane mushrooms standing in for crab meat.",
+                ingredients: [
+                    "1 lb Dolomite Farm lion's mane mushroom, shredded",
+                    "1/4 cup mayonnaise",
+                    "1 tbsp Dijon mustard",
+                    "1/4 cup breadcrumbs",
+                    "1 egg, beaten",
+                    "1 tbsp chopped fresh parsley",
+                    "Salt and pepper to taste",
+                    "Olive oil for frying"
+                ],
+                instructions: [
+                    "Sauté shredded lion's mane mushroom in a dry pan over medium heat until most of the moisture has evaporated.",
+                    "In a bowl, combine the cooked mushroom with mayonnaise, mustard, breadcrumbs, egg, parsley, salt, and pepper.",
+                    "Form the mixture into small patties.",
+                    "Heat olive oil in a skillet over medium heat. Fry patties for 3-4 minutes per side, until golden brown and crispy.",
+                    "Serve with a lemon wedge or tartar sauce."
+                ]
+            },
+            {
+                title: "Heirloom Tomato and Basil Salad",
+                description: "A simple, fresh salad that celebrates the vibrant flavors of summer tomatoes and fragrant basil.",
+                ingredients: [
+                    "2-3 Dolomite Farm heirloom tomatoes, sliced or chopped",
+                    "1/2 red onion, thinly sliced",
+                    "1/4 cup fresh basil leaves",
+                    "2 tbsp olive oil",
+                    "1 tbsp balsamic glaze",
+                    "Salt and black pepper to taste"
+                ],
+                instructions: [
+                    "Arrange the sliced tomatoes and red onion on a serving platter.",
+                    "Drizzle with olive oil and balsamic glaze.",
+                    "Tear fresh basil leaves and sprinkle them over the top.",
+                    "Season with salt and pepper. Serve immediately."
+                ]
+            },
+            {
+                title: "Quick Tomato and Garlic Pasta",
+                description: "A fast and flavorful pasta sauce made with sweet, roasted tomatoes and rich garlic.",
+                ingredients: [
+                    "1 lb Dolomite Farm tomatoes, halved",
+                    "4 cloves garlic, whole",
+                    "2 tbsp olive oil",
+                    "1/2 lb spaghetti or linguine",
+                    "Fresh Parmesan cheese for serving",
+                    "Salt and pepper to taste"
+                ],
+                instructions: [
+                    "Preheat oven to 400°F (200°C).",
+                    "Toss halved tomatoes and whole garlic cloves with olive oil, salt, and pepper on a baking sheet.",
+                    "Roast for 20-25 minutes until tomatoes are soft and bursting.",
+                    "While vegetables roast, cook pasta according to package directions.",
+                    "Mash the roasted tomatoes and garlic into a sauce. Toss with the cooked pasta.",
+                    "Serve hot with a sprinkle of fresh Parmesan."
+                ]
+            },
+            {
+                title: "Spicy Korean Cucumber Pepper Stir-fry",
+                description: "A vibrant stir-fry that uses the unique, mild heat and crispness of Korean cucumber peppers.",
+                ingredients: [
+                    "1 lb Korean cucumber peppers, sliced",
+                    "2 tbsp soy sauce",
+                    "1 tbsp honey or maple syrup",
+                    "1 tsp sesame oil",
+                    "1 clove garlic, minced",
+                    "1/2 tsp ginger, grated",
+                    "1 tbsp olive oil",
+                    "Sesame seeds for garnish"
+                ],
+                instructions: [
+                    "In a small bowl, whisk together the soy sauce, honey, sesame oil, garlic, and ginger to create the sauce.",
+                    "Heat olive oil in a large skillet or wok over high heat. Add the sliced peppers and stir-fry for 3-4 minutes until they are slightly softened but still crisp.",
+                    "Pour the sauce over the peppers and stir to coat. Cook for another minute until the sauce has thickened slightly.",
+                    "Remove from heat, garnish with sesame seeds, and serve immediately as a side dish."
+                ]
+            },
+            {
+                title: "Crispy Roasted Okra",
+                description: "This recipe eliminates the slimy texture of okra, resulting in a crispy, delicious side dish.",
+                ingredients: [
+                    "1 lb Dolomite Farm okra, ends trimmed",
+                    "2 tbsp olive oil",
+                    "1/2 tsp smoked paprika",
+                    "1/2 tsp garlic powder",
+                    "Salt and pepper to taste"
+                ],
+                instructions: [
+                    "Preheat oven to 425°F (220°C).",
+                    "In a large bowl, toss the trimmed okra with olive oil, smoked paprika, garlic powder, salt, and pepper until evenly coated.",
+                    "Spread the okra in a single layer on a baking sheet.",
+                    "Roast for 15-20 minutes, stirring once halfway through, until the okra is tender and the outside is crispy.",
+                    "Serve immediately as a snack or a side."
+                ]
+            }
+        ];
+
+        // Function to render recipes based on a search query
+        function renderRecipes(query = '') {
+            const container = document.getElementById('recipe-cards-container');
+            container.innerHTML = '';
+            
+            const filteredRecipes = recipes.filter(recipe => {
+                const searchString = query.toLowerCase();
+                return recipe.title.toLowerCase().includes(searchString) ||
+                       recipe.description.toLowerCase().includes(searchString) ||
+                       recipe.ingredients.some(ingredient => ingredient.toLowerCase().includes(searchString));
+            });
+
+            if (filteredRecipes.length === 0) {
+                container.innerHTML = '<p class="text-center text-gray-500 col-span-full">No recipes found. Try a different search term!</p>';
+                return;
+            }
+
+            filteredRecipes.forEach(recipe => {
+                const card = document.createElement('div');
+                card.className = 'bg-white p-6 rounded-3xl shadow-lg cursor-pointer hover:shadow-xl transition-shadow duration-300';
+                card.innerHTML = `
+                    <h4 class="text-xl font-bold mb-2 text-green-800">${recipe.title}</h4>
+                    <p class="text-base text-gray-700">${recipe.description}</p>
+                `;
+                card.onclick = () => showLightbox(recipe);
+                container.appendChild(card);
+            });
+        }
+        
+        // Functions to handle the lightbox modal
+        function showLightbox(recipe) {
+            const modal = document.getElementById('recipe-modal');
+            document.getElementById('modal-recipe-title').innerText = recipe.title;
+            document.getElementById('modal-recipe-description').innerText = recipe.description;
+            
+            const ingredientsList = document.getElementById('modal-ingredients-list');
+            ingredientsList.innerHTML = recipe.ingredients.map(item => `<li>${item}</li>`).join('');
+
+            const instructionsList = document.getElementById('modal-instructions-list');
+            instructionsList.innerHTML = recipe.instructions.map(item => `<li>${item}</li>`).join('');
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.add('modal-open');
+                lucide.createIcons();
+            }, 10);
+        }
+
+        function hideLightbox() {
+            const modal = document.getElementById('recipe-modal');
+            modal.classList.remove('modal-open');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        // Add event listener for search input
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById('recipe-search');
+            if (searchInput) {
+                searchInput.addEventListener('input', (event) => {
+                    renderRecipes(event.target.value);
+                });
+            }
+        });
+
         // Function to handle showing and hiding pages
         function showPage(pageId) {
-            // Hide all pages
             document.querySelectorAll('.page').forEach(page => {
                 page.classList.add('hidden');
             });
-            // Show the requested page
             document.getElementById(pageId + '-page').classList.remove('hidden');
 
-            // Update active state in navigation
             document.querySelectorAll('.nav-link').forEach(link => {
                 link.classList.remove('active');
             });
             document.querySelector(`a[href="#${pageId}"]`).classList.add('active');
 
-            // Re-run animations for the new page
+            if (pageId === 'recipes') {
+                renderRecipes();
+            }
+
             animateOnScroll();
         }
 
@@ -271,12 +534,11 @@ get there that's a while<!DOCTYPE html>
                     if (entry.isIntersecting) {
                         entry.target.classList.add('is-visible');
                     } else {
-                        // Optional: remove class to re-trigger on scroll back up
                         entry.target.classList.remove('is-visible');
                     }
                 });
             }, {
-                threshold: 0.1 // Trigger when 10% of the element is visible
+                threshold: 0.1
             });
 
             fadeInElements.forEach(element => {
@@ -284,184 +546,18 @@ get there that's a while<!DOCTYPE html>
             });
         };
 
-        // Gemini API powered recipe generator
-        async function generateRecipe() {
-            const ingredients = document.getElementById('recipe-ingredients').value;
-            const outputContainer = document.getElementById('recipe-output-container');
-            const outputDiv = document.getElementById('recipe-output');
-            const loadingIndicator = document.getElementById('recipe-loading');
-
-            if (!ingredients) {
-                alert('Please enter at least one ingredient!');
-                return;
-            }
-
-            // Show loading indicator and clear previous output
-            outputContainer.classList.add('hidden');
-            outputDiv.innerHTML = '';
-            loadingIndicator.classList.remove('hidden');
-
-            const prompt = `Create a simple recipe using these ingredients: ${ingredients}. The recipe should be easy to follow for a home cook and include a title, a list of ingredients, and step-by-step instructions. Please format the response using Markdown.`;
-
-            let chatHistory = [];
-            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
-            const payload = { contents: chatHistory };
-            const apiKey = "" 
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
-
-            try {
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const result = await response.json();
-                
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
-                    const text = result.candidates[0].content.parts[0].text;
-                    outputDiv.innerHTML = marked.parse(text); // Use a markdown parser to render the content
-                    outputContainer.classList.remove('hidden');
-                } else {
-                    outputDiv.innerHTML = '<p>Sorry, I couldn\'t generate a recipe. Please try again with different ingredients.</p>';
-                    outputContainer.classList.remove('hidden');
-                }
-            } catch (error) {
-                console.error('Error fetching recipe:', error);
-                outputDiv.innerHTML = '<p>An error occurred. Please try again later.</p>';
-                outputContainer.classList.remove('hidden');
-            } finally {
-                loadingIndicator.classList.add('hidden');
-            }
-        }
-
-        // Helper function to decode base64 to array buffer
-        function base64ToArrayBuffer(base64) {
-            const binaryString = window.atob(base64);
-            const len = binaryString.length;
-            const bytes = new Uint8Array(len);
-            for (let i = 0; i < len; i++) {
-                bytes[i] = binaryString.charCodeAt(i);
-            }
-            return bytes.buffer;
-        }
-
-        // Helper function to convert PCM audio data to WAV
-        function pcmToWav(pcm16, sampleRate) {
-            const pcmData = pcm16.buffer;
-            const buffer = new ArrayBuffer(44 + pcmData.byteLength);
-            const view = new DataView(buffer);
-            let offset = 0;
-
-            // RIFF chunk
-            view.setUint32(offset, 0x52494646, true); // "RIFF"
-            offset += 4;
-            view.setUint32(offset, 36 + pcmData.byteLength, true);
-            offset += 4;
-            view.setUint32(offset, 0x57415645, true); // "WAVE"
-            offset += 4;
-
-            // fmt chunk
-            view.setUint32(offset, 0x666d7420, true); // "fmt "
-            offset += 4;
-            view.setUint32(offset, 16, true); // Subchunk1Size
-            offset += 4;
-            view.setUint16(offset, 1, true); // AudioFormat
-            offset += 2;
-            view.setUint16(offset, 1, true); // NumChannels
-            offset += 2;
-            view.setUint32(offset, sampleRate, true); // SampleRate
-            offset += 4;
-            view.setUint32(offset, sampleRate * 2, true); // ByteRate
-            offset += 4;
-            view.setUint16(offset, 2, true); // BlockAlign
-            offset += 2;
-            view.setUint16(offset, 16, true); // BitsPerSample
-            offset += 2;
-
-            // data chunk
-            view.setUint32(offset, 0x64617461, true); // "data"
-            offset += 4;
-            view.setUint32(offset, pcmData.byteLength, true);
-            offset += 4;
-
-            const pcmBytes = new Uint8Array(pcmData);
-            for (let i = 0; i < pcmBytes.length; i++) {
-                view.setUint8(offset + i, pcmBytes[i]);
-            }
-            return new Blob([view], { type: 'audio/wav' });
-        }
-
-
-        // Gemini API powered text-to-speech for "About Us" page
-        async function speakAboutUs() {
-            const aboutUsText = document.getElementById('about-us-text').innerText;
-            const audioPlayer = document.getElementById('tts-audio');
-
-            audioPlayer.src = ''; // Clear previous audio
-            const payload = {
-                contents: [{
-                    parts: [{ text: aboutUsText }]
-                }],
-                generationConfig: {
-                    responseModalities: ["AUDIO"],
-                    speechConfig: {
-                        voiceConfig: {
-                            prebuiltVoiceConfig: { voiceName: "Kore" }
-                        }
-                    }
-                },
-                model: "gemini-2.5-flash-preview-tts"
-            };
-            const apiKey = "";
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
-            
-            try {
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const result = await response.json();
-                const part = result?.candidates?.[0]?.content?.parts?.[0];
-                const audioData = part?.inlineData?.data;
-                const mimeType = part?.inlineData?.mimeType;
-
-                if (audioData && mimeType && mimeType.startsWith("audio/")) {
-                    // Extract sample rate from mimeType
-                    const match = mimeType.match(/rate=(\d+)/);
-                    const sampleRate = match ? parseInt(match[1], 10) : 16000;
-                    
-                    const pcmData = base64ToArrayBuffer(audioData);
-                    const pcm16 = new Int16Array(pcmData);
-                    const wavBlob = pcmToWav(pcm16, sampleRate);
-                    const audioUrl = URL.createObjectURL(wavBlob);
-                    
-                    audioPlayer.src = audioUrl;
-                    audioPlayer.play();
-                } else {
-                    console.error("Failed to generate audio. Response structure unexpected or content missing.");
-                    alert("Failed to generate audio. Please try again.");
-                }
-
-            } catch (error) {
-                console.error('Error generating TTS audio:', error);
-                alert("An error occurred while generating audio. Please try again later.");
-            }
-        }
-
-
         // Initial setup on page load
         window.onload = function() {
-            // Activate Lucide icons - this is the fix
+            // Check for a URL hash and show the corresponding page.
+            const pageId = window.location.hash.substring(1);
+            if (pageId === 'home' || pageId === 'about' || pageId === 'recipes') {
+                showPage(pageId);
+            } else {
+                showPage('home'); // Default to home page
+            }
+            
+            // Activate Lucide icons
             lucide.createIcons();
-            // Show the home page initially
-            showPage('home');
             // Trigger animations
             animateOnScroll();
         };
